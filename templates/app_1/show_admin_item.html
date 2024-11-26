@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1 align="center"><b>Админка.</b>Вся наша мебель</h1>
+
+{% if user.is_authenticated %}
+    {% if mebels %}
+    <div class="row justify-content-center">
+        <div class="col-auto">
+            <table class="table table-responsive">
+                <thead>
+                <tr>
+                    <th scope="col">id</th>
+                    <th scope="col">дата</th>
+                    <th scope="col">ссылка</th>
+                    <th scope="col">цена</th>
+                    <th scope="col">описание</th>
+                    <th scope="col">редактирование</th>
+                    <th scope="col">удаление</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for mebel in mebels %}
+                <tr>
+                    <td><b>{{mebel.id}}</b></td>
+                    <td>{{mebel.parse_datetime}}</td>
+                    <td scope="row"><a href={{mebel.link}}>прямая ссылка</a></td>
+                    <td>{{mebel.price}}</td>
+                    <td>{{mebel.description}}</td>
+                    <td>
+                        <form action="{% url 'update_item' mebel.id %}" method="post">
+                            {% csrf_token %}
+                            {{form.as_p}}
+                            <button type="submit" class="btn btn-success">сохранить</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form action="{% url 'delete_item' mebel.id %}">
+                            <button type="submit" class="btn btn-danger">удалить</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% else %}
+    <h2>К сожалению мебели нету</h2>
+    {% endif %}
+{% else %}
+        <p style="text-align: center">
+            <b>вы не авторизованы</b>
+            <a href="{% url 'login' %}">войти</a>
+            <a href="{% url 'register' %}">регистрация</a>
+        </p>
+{% endif %}
+
+        {% endblock %}
